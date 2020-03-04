@@ -34,6 +34,12 @@ func (statement *Statement) GenInsertSQL(colNames []string, args []interface{}) 
 		colPlaces = colPlaces[0 : len(colPlaces)-2]
 	}
 
+	exprs := session.statement.ExprColumns
+	colPlaces := strings.Repeat("?, ", len(colNames))
+	if exprs.Len() <= 0 && len(colPlaces) > 0 {
+		colPlaces = colPlaces[0 : len(colPlaces)-2]
+	}
+
 	var buf = builder.NewWriter()
 	if _, err := buf.WriteString("INSERT INTO "); err != nil {
 		return "", nil, err

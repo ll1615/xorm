@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"xorm.io/xorm/caches"
+	"xorm.io/xorm/dialects"
 	"xorm.io/xorm/log"
 	"xorm.io/xorm/names"
 	"xorm.io/xorm/schemas"

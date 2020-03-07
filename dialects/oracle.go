@@ -499,7 +499,7 @@ var (
 		"ZONE":                      true,
 	}
 
-	oracleQuoter = schemas.Quoter{'[', ']', schemas.AlwaysReserve}
+	oracleQuoter = schemas.Quoter{'"', '"', schemas.AlwaysReserve}
 )
 
 type oracle struct {

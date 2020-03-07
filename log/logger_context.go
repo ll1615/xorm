@@ -55,7 +55,7 @@ func NewLoggerAdapter(logger Logger) ContextLogger {
 }
 
 func (l *LoggerAdapter) BeforeSQL(ctx LogContext) {
-	l.logger.Debugf("[SQL] %v %v", ctx.SQL, ctx.Args)
+	//l.logger.Debugf("[SQL] %v %v", ctx.SQL, ctx.Args)
 }
 
 func (l *LoggerAdapter) AfterSQL(ctx LogContext) {

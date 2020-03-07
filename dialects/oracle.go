@@ -519,9 +519,9 @@ func (db *oracle) SQLType(c *schemas.Column) string {
 	case schemas.Binary, schemas.VarBinary, schemas.Blob, schemas.TinyBlob, schemas.MediumBlob, schemas.LongBlob, schemas.Bytea:
 		return schemas.Blob
 	case schemas.Time, schemas.DateTime, schemas.TimeStamp:
-		res = schemas.TimeStamp
+		res = schemas.Date
 	case schemas.TimeStampz:
-		res = "TIMESTAMP WITH TIME ZONE"
+		res = "TIMESTAMP"
 	case schemas.Float, schemas.Double, schemas.Numeric, schemas.Decimal:
 		res = "NUMBER"
 	case schemas.Text, schemas.MediumText, schemas.LongText, schemas.Json:
@@ -552,8 +552,14 @@ func (db *oracle) IsReserved(name string) bool {
 	return ok
 }
 
-func (db *oracle) DropTableSQL(tableName string) (string, bool) {
-	return fmt.Sprintf("DROP TABLE `%s`", tableName), false
+func (db *oracle) DropTableSQL(tableName, autoincrCol string) ([]string, bool) {
+	var sqls = []string{
+		fmt.Sprintf("DROP TABLE `%s`", tableName),
+	}
+	if autoincrCol != "" {
+		sqls = append(sqls, fmt.Sprintf("DROP SEQUENCE %s", seqName(tableName)))
+	}
+	return sqls, false
 }
 
 func (db *oracle) CreateTableSQL(table *schemas.Table, tableName string) ([]string, bool) {
@@ -569,11 +575,7 @@ func (db *oracle) CreateTableSQL(table *schemas.Table, tableName string) ([]stri
 
 	for _, colName := range table.ColumnsSeq() {
 		col := table.GetColumn(colName)
-		/*if col.IsPrimaryKey && len(pkList) == 1 {
-			sql += col.String(b.dialect)
-		} else {*/
 		sql += db.StringNoPk(col)
-		// }
 		sql = strings.TrimSpace(sql)
 		sql += ", "
 	}
@@ -584,8 +586,19 @@ func (db *oracle) CreateTableSQL(table *schemas.Table, tableName string) ([]stri
 		sql += " ), "
 	}
 
-	sql = sql[:len(sql)-2] + ")"
-	return []string{sql}, false
+	var sqls = []string{sql[:len(sql)-2] + ")"}
+
+	if table.AutoIncrColumn() != nil {
+		var sql2 = fmt.Sprintf(`CREATE sequence %s 
+			minvalue 1
+       		nomaxvalue
+       		start with 1
+       		increment by 1
+       		nocycle
+			   nocache`, seqName(tableName))
+		sqls = append(sqls, sql2)
+	}
+	return sqls, false
 }
 
 func (db *oracle) SetQuotePolicy(quotePolicy QuotePolicy) {
@@ -622,12 +635,32 @@ func (db *oracle) IsColumnExist(ctx context.Context, tableName, colName string) 
 	return db.HasRecords(ctx, query, args...)
 }
 
-func (db *oracle) GetColumns(ctx context.Context, tableName string) ([]string, map[string]*schemas.Column, error) {
-	args := []interface{}{tableName}
-	s := "SELECT column_name,data_default,data_type,data_length,data_precision,data_scale," +
-		"nullable FROM USER_TAB_COLUMNS WHERE table_name = :1"
+func seqName(tableName string) string {
+	return "SEQ_" + strings.ToUpper(tableName)
+}
 
-	rows, err := db.DB().QueryContext(ctx, s, args...)
+func (db *oracle) GetColumns(ctx context.Context, tableName string) ([]string, map[string]*schemas.Column, error) {
+	//s := "SELECT column_name,data_default,data_type,data_length,data_precision,data_scale," +
+	//	"nullable FROM USER_TAB_COLUMNS WHERE table_name = :1"
+
+	s := `select   column_name   from   user_cons_columns   
+  where   constraint_name   =   (select   constraint_name   from   user_constraints   
+			  where   table_name   =   :1  and   constraint_type   ='P')`
+	var pkName string
+	err := db.DB().QueryRowContext(ctx, s, tableName).Scan(&pkName)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	s = `SELECT USER_TAB_COLS.COLUMN_NAME, USER_TAB_COLS.DATA_DEFAULT, USER_TAB_COLS.DATA_TYPE, USER_TAB_COLS.DATA_LENGTH, 
+		USER_TAB_COLS.data_precision, USER_TAB_COLS.data_scale, USER_TAB_COLS.NULLABLE,
+		user_col_comments.comments
+		FROM USER_TAB_COLS 
+		LEFT JOIN user_col_comments on user_col_comments.TABLE_NAME=USER_TAB_COLS.TABLE_NAME 
+		AND user_col_comments.COLUMN_NAME=USER_TAB_COLS.COLUMN_NAME
+		WHERE USER_TAB_COLS.table_name = :1`
+
+	rows, err := db.DB().QueryContext(ctx, s, tableName)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -639,11 +672,11 @@ func (db *oracle) GetColumns(ctx context.Context, tableName string) ([]string, m
 		col := new(schemas.Column)
 		col.Indexes = make(map[string]int)
 
-		var colName, colDefault, nullable, dataType, dataPrecision, dataScale *string
+		var colName, colDefault, nullable, dataType, dataPrecision, dataScale, comment *string
 		var dataLen int
 
 		err = rows.Scan(&colName, &colDefault, &dataType, &dataLen, &dataPrecision,
-			&dataScale, &nullable)
+			&dataScale, &nullable, &comment)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -660,10 +693,28 @@ func (db *oracle) GetColumns(ctx context.Context, tableName string) ([]string, m
 			col.Nullable = false
 		}
 
-		var ignore bool
+		if comment != nil {
+			col.Comment = *comment
+		}
+		if pkName != "" && pkName == col.Name {
+			col.IsPrimaryKey = true
 
-		var dt string
-		var len1, len2 int
+			has, err := db.HasRecords(ctx, "SELECT * FROM USER_SEQUENCES WHERE SEQUENCE_NAME = :1", seqName(tableName))
+			if err != nil {
+				return nil, nil, err
+			}
+			if has {
+				col.IsAutoIncrement = true
+			}
+
+			fmt.Println("-----", pkName, col.Name, col.IsPrimaryKey)
+		}
+
+		var (
+			ignore     bool
+			dt         string
+			len1, len2 int
+		)
 		dts := strings.Split(*dataType, "(")
 		dt = dts[0]
 		if len(dts) > 1 {
@@ -715,6 +766,10 @@ func (db *oracle) GetColumns(ctx context.Context, tableName string) ([]string, m
 		cols[col.Name] = col
 		colSeq = append(colSeq, col.Name)
 	}
+
+	/*select *
+	from user_tab_comments
+	where Table_Name='用户表' */
 
 	return colSeq, cols, nil
 }

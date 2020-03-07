@@ -296,6 +296,16 @@ func (session *Session) innerInsert(bean interface{}) (int64, error) {
 		return 0, err
 	}
 
+	if len(table.AutoIncrement) > 0 && session.engine.dialect.URI().DBType == schemas.ORACLE {
+		colNames = append(colNames, table.AutoIncrement)
+		seq := "seq_" + tableName + ".nextval"
+		if colPlaces == "" {
+			colPlaces = seq
+		} else {
+			colPlaces += ", " + seq
+		}
+	}
+
 	sqlStr, args, err := session.statement.GenInsertSQL(colNames, args)
 	if err != nil {
 		return 0, err
@@ -350,18 +360,13 @@ func (session *Session) innerInsert(bean interface{}) (int64, error) {
 			}
 		}
 
-		res, err := session.queryBytes("select seq_atable.currval from dual")
+		var id int64
+		err = session.queryRow(fmt.Sprintf("select %s.currval from dual", tableName)).Scan(&id)
 		if err != nil {
-			return 0, err
-		}
-		if len(res) < 1 {
-			return 0, errors.New("insert no error but not returned id")
-		}
-
-		idByte := res[0][table.AutoIncrement]
-		id, err := strconv.ParseInt(string(idByte), 10, 64)
-		if err != nil || id <= 0 {
 			return 1, err
+		}
+		if id == 0 {
+			return 1, errors.New("insert no error but not returned id")
 		}
 
 		aiValue, err := table.AutoIncrColumn().ValueOf(bean)

@@ -6,6 +6,7 @@ package dialects
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"net/url"
@@ -640,15 +641,15 @@ func seqName(tableName string) string {
 }
 
 func (db *oracle) GetColumns(ctx context.Context, tableName string) ([]string, map[string]*schemas.Column, error) {
-	//s := "SELECT column_name,data_default,data_type,data_length,data_precision,data_scale," +
-	//	"nullable FROM USER_TAB_COLUMNS WHERE table_name = :1"
-
 	s := `select   column_name   from   user_cons_columns   
   where   constraint_name   =   (select   constraint_name   from   user_constraints   
 			  where   table_name   =   :1  and   constraint_type   ='P')`
 	var pkName string
 	err := db.DB().QueryRowContext(ctx, s, tableName).Scan(&pkName)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			err = nil
+		}
 		return nil, nil, err
 	}
 
@@ -706,8 +707,6 @@ func (db *oracle) GetColumns(ctx context.Context, tableName string) ([]string, m
 			if has {
 				col.IsAutoIncrement = true
 			}
-
-			fmt.Println("-----", pkName, col.Name, col.IsPrimaryKey)
 		}
 
 		var (
@@ -878,8 +877,6 @@ func parseOracle(driverName, dataSourceName string) (*URI, error) {
 		db.User = u.User.Username()
 		db.Passwd, _ = u.User.Password()
 	}
-
-	fmt.Printf("%#v\n", db)
 
 	if db.DBName == "" {
 		return nil, errors.New("dbname is empty")

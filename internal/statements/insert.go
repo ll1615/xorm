@@ -34,10 +34,14 @@ func (statement *Statement) GenInsertSQL(colNames []string, args []interface{}) 
 		colPlaces = colPlaces[0 : len(colPlaces)-2]
 	}
 
-	exprs := session.statement.ExprColumns
-	colPlaces := strings.Repeat("?, ", len(colNames))
-	if exprs.Len() <= 0 && len(colPlaces) > 0 {
-		colPlaces = colPlaces[0 : len(colPlaces)-2]
+	if len(table.AutoIncrement) > 0 && statement.dialect.URI().DBType == schemas.ORACLE {
+		colNames = append(colNames, table.AutoIncrement)
+		seq := "seq_" + tableName + ".nextval"
+		if colPlaces == "" {
+			colPlaces = seq
+		} else {
+			colPlaces += ", " + seq
+		}
 	}
 
 	var buf = builder.NewWriter()

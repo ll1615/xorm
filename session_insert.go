@@ -296,16 +296,6 @@ func (session *Session) innerInsert(bean interface{}) (int64, error) {
 		return 0, err
 	}
 
-	if len(table.AutoIncrement) > 0 && session.engine.dialect.URI().DBType == schemas.ORACLE {
-		colNames = append(colNames, table.AutoIncrement)
-		seq := "seq_" + tableName + ".nextval"
-		if colPlaces == "" {
-			colPlaces = seq
-		} else {
-			colPlaces += ", " + seq
-		}
-	}
-
 	sqlStr, args, err := session.statement.GenInsertSQL(colNames, args)
 	if err != nil {
 		return 0, err

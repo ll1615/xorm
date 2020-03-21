@@ -411,6 +411,19 @@ func (db *mysql) GetColumns(ctx context.Context, tableName string) ([]string, ma
 				col.Default = "'" + col.Default + "'"
 			}
 		}
+
+		if col.Name == "created" {
+			col.IsCreated = true
+		}
+
+		if col.Name == "updated" {
+			col.IsUpdated = true
+		}
+
+		if col.Name == "deleted" {
+			col.IsDeleted = true
+		}
+
 		cols[col.Name] = col
 		colSeq = append(colSeq, col.Name)
 	}

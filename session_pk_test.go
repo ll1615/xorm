@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"gitea.com/ll1615/xorm/schemas"
 	"github.com/stretchr/testify/assert"
-	"xorm.io/xorm/schemas"
 )
 
 type IntId struct {

@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strings"
 
+	"gitea.com/ll1615/xorm/schemas"
 	"xorm.io/builder"
-	"xorm.io/xorm/schemas"
 )
 
 type ErrUnsupportedExprType struct {

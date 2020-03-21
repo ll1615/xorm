@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
+	"gitea.com/ll1615/xorm/schemas"
 	"xorm.io/builder"
-	"xorm.io/xorm/schemas"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -1,4 +1,4 @@
-IMPORT := xorm.io/xorm
+IMPORT := gitea.com/ll1615/xorm
 export GO111MODULE=on
 
 GO ?= go

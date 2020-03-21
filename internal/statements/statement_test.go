@@ -10,12 +10,12 @@ import (
 	"testing"
 	"time"
 
+	"gitea.com/ll1615/xorm/caches"
+	"gitea.com/ll1615/xorm/dialects"
+	"gitea.com/ll1615/xorm/names"
+	"gitea.com/ll1615/xorm/schemas"
+	"gitea.com/ll1615/xorm/tags"
 	"github.com/stretchr/testify/assert"
-	"xorm.io/xorm/caches"
-	"xorm.io/xorm/dialects"
-	"xorm.io/xorm/names"
-	"xorm.io/xorm/schemas"
-	"xorm.io/xorm/tags"
 
 	_ "github.com/mattn/go-sqlite3"
 )

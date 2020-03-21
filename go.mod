@@ -1,4 +1,4 @@
-module xorm.io/xorm
+module gitea.com/ll1615/xorm
 
 go 1.11
 

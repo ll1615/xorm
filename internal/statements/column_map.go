@@ -7,7 +7,7 @@ package statements
 import (
 	"strings"
 
-	"xorm.io/xorm/schemas"
+	"gitea.com/ll1615/xorm/schemas"
 )
 
 type columnMap []string

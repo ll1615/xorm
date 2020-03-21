@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
+	"gitea.com/ll1615/xorm/contexts"
+	"gitea.com/ll1615/xorm/schemas"
 	"github.com/stretchr/testify/assert"
-	"xorm.io/xorm/contexts"
-	"xorm.io/xorm/schemas"
 )
 
 func TestGetVar(t *testing.T) {

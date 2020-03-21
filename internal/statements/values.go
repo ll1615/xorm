@@ -11,10 +11,10 @@ import (
 	"reflect"
 	"time"
 
-	"xorm.io/xorm/convert"
-	"xorm.io/xorm/dialects"
-	"xorm.io/xorm/internal/json"
-	"xorm.io/xorm/schemas"
+	"gitea.com/ll1615/xorm/convert"
+	"gitea.com/ll1615/xorm/dialects"
+	"gitea.com/ll1615/xorm/internal/json"
+	"gitea.com/ll1615/xorm/schemas"
 )
 
 var (

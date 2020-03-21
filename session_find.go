@@ -9,10 +9,10 @@ import (
 	"fmt"
 	"reflect"
 
+	"gitea.com/ll1615/xorm/caches"
+	"gitea.com/ll1615/xorm/internal/utils"
+	"gitea.com/ll1615/xorm/schemas"
 	"xorm.io/builder"
-	"xorm.io/xorm/caches"
-	"xorm.io/xorm/internal/utils"
-	"xorm.io/xorm/schemas"
 )
 
 const (

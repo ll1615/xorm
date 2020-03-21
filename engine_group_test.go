@@ -7,9 +7,9 @@ package xorm
 import (
 	"testing"
 
+	"gitea.com/ll1615/xorm/log"
+	"gitea.com/ll1615/xorm/schemas"
 	"github.com/stretchr/testify/assert"
-	"xorm.io/xorm/log"
-	"xorm.io/xorm/schemas"
 )
 
 func TestEngineGroup(t *testing.T) {

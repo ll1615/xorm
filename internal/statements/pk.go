@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"reflect"
 
+	"gitea.com/ll1615/xorm/schemas"
 	"xorm.io/builder"
-	"xorm.io/xorm/schemas"
 )
 
 var (

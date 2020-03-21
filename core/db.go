@@ -14,8 +14,8 @@ import (
 	"sync"
 	"time"
 
-	"xorm.io/xorm/log"
-	"xorm.io/xorm/names"
+	"gitea.com/ll1615/xorm/log"
+	"gitea.com/ll1615/xorm/names"
 )
 
 var (

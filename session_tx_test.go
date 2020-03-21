@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
+	"gitea.com/ll1615/xorm/internal/utils"
+	"gitea.com/ll1615/xorm/names"
 	"github.com/stretchr/testify/assert"
-	"xorm.io/xorm/internal/utils"
-	"xorm.io/xorm/names"
 )
 
 func TestTransaction(t *testing.T) {

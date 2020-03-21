@@ -12,16 +12,16 @@ import (
 	"strings"
 	"testing"
 
+	"gitea.com/ll1615/xorm/caches"
+	"gitea.com/ll1615/xorm/dialects"
+	"gitea.com/ll1615/xorm/log"
+	"gitea.com/ll1615/xorm/names"
+	"gitea.com/ll1615/xorm/schemas"
 	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 	_ "github.com/ziutek/mymysql/godrv"
-	"xorm.io/xorm/caches"
-	"xorm.io/xorm/dialects"
-	"xorm.io/xorm/log"
-	"xorm.io/xorm/names"
-	"xorm.io/xorm/schemas"
 )
 
 var (

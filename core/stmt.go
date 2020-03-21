@@ -11,7 +11,7 @@ import (
 	"reflect"
 	"time"
 
-	"xorm.io/xorm/log"
+	"gitea.com/ll1615/xorm/log"
 )
 
 // Stmt reprents a stmt objects

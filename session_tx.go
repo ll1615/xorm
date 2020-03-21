@@ -7,7 +7,7 @@ package xorm
 import (
 	"time"
 
-	"xorm.io/xorm/log"
+	"gitea.com/ll1615/xorm/log"
 )
 
 // Begin a transaction

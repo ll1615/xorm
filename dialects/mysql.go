@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"xorm.io/xorm/core"
-	"xorm.io/xorm/schemas"
+	"gitea.com/ll1615/xorm/core"
+	"gitea.com/ll1615/xorm/schemas"
 )
 
 var (
@@ -379,6 +379,11 @@ func (db *mysql) GetColumns(ctx context.Context, tableName string) ([]string, ma
 		if colType == "DOUBLE UNSIGNED" {
 			colType = "DOUBLE"
 		}
+
+		if strings.Contains(colType, "INT UNSIGNED") {
+			colType = strings.TrimRight(colType, " UNSIGNED")
+		}
+
 		col.Length = len1
 		col.Length2 = len2
 		if _, ok := schemas.SqlTypes[colType]; ok {

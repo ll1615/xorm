@@ -13,11 +13,11 @@ import (
 	"sync"
 	"time"
 
-	"xorm.io/xorm/caches"
-	"xorm.io/xorm/convert"
-	"xorm.io/xorm/dialects"
-	"xorm.io/xorm/names"
-	"xorm.io/xorm/schemas"
+	"gitea.com/ll1615/xorm/caches"
+	"gitea.com/ll1615/xorm/convert"
+	"gitea.com/ll1615/xorm/dialects"
+	"gitea.com/ll1615/xorm/names"
+	"gitea.com/ll1615/xorm/schemas"
 )
 
 var (

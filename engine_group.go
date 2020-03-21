@@ -8,10 +8,10 @@ import (
 	"context"
 	"time"
 
-	"xorm.io/xorm/caches"
-	"xorm.io/xorm/dialects"
-	"xorm.io/xorm/log"
-	"xorm.io/xorm/names"
+	"gitea.com/ll1615/xorm/caches"
+	"gitea.com/ll1615/xorm/dialects"
+	"gitea.com/ll1615/xorm/log"
+	"gitea.com/ll1615/xorm/names"
 )
 
 // EngineGroup defines an engine group

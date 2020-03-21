@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"encoding/gob"
 
-	"xorm.io/xorm/internal/utils"
+	"gitea.com/ll1615/xorm/internal/utils"
 )
 
 type PK []interface{}

@@ -10,9 +10,9 @@ import (
 	"fmt"
 	"reflect"
 
+	"gitea.com/ll1615/xorm/core"
+	"gitea.com/ll1615/xorm/internal/utils"
 	"xorm.io/builder"
-	"xorm.io/xorm/core"
-	"xorm.io/xorm/internal/utils"
 )
 
 // Rows rows wrapper a rows to

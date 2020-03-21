@@ -12,9 +12,9 @@ import (
 	"strconv"
 	"strings"
 
+	"gitea.com/ll1615/xorm/internal/utils"
+	"gitea.com/ll1615/xorm/schemas"
 	"xorm.io/builder"
-	"xorm.io/xorm/internal/utils"
-	"xorm.io/xorm/schemas"
 )
 
 // ErrNoElementsOnSlice represents an error there is no element when insert

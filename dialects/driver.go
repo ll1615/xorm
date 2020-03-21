@@ -7,7 +7,7 @@ package dialects
 import (
 	"fmt"
 
-	"xorm.io/xorm/core"
+	"gitea.com/ll1615/xorm/core"
 )
 
 type Driver interface {

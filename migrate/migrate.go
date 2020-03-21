@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"xorm.io/xorm"
+	"gitea.com/ll1615/xorm"
 )
 
 // MigrateFunc is the func signature for migrating.
